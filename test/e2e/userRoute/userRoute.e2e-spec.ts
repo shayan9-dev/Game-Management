@@ -22,12 +22,12 @@ describe('Auth Routes (e2e)', () => {
     expect(res.status).toBe(401);
   });
 
-  it('should login successfully with correct credentials', async () => {
+  it('should register successfully with correct credentials', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({ username: 'admin', password: '1234' }); // replace with valid values
+      .post('/register')
+      .send({ username: 'admin', password: '1234', email: 'shayan@gmail.com' }); 
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('accessToken'); // adjust according to your response
+    expect(res.body).toHaveProperty('accessToken'); 
   });
 });
