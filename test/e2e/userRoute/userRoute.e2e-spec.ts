@@ -1,7 +1,6 @@
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
-import { createTestApp } from '../setup';
-
+import { createTestApp } from '../setup'; // assumes you have this set up for test environment
 
 describe('Auth Routes (e2e)', () => {
   let app: INestApplication;
@@ -14,20 +13,29 @@ describe('Auth Routes (e2e)', () => {
     await app.close();
   });
 
-  it('should fail login with wrong credentials', async () => {
+  it('should register successfully with correct credentials', async () => {
+    const uniqueUsername = `user_${Date.now()}`;
     const res = await request(app.getHttpServer())
-      .post('/register')
-      .send({ username: 'invalid', password: 'invalid' });
+      .post('/auth/register')
+      .send({
+        username: uniqueUsername,
+        password: '1234',
+        email: `${uniqueUsername}@example.com`,
+      });
 
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(201); // assuming @HttpCode(201) in controller
+    expect(res.body).toHaveProperty('accessToken');
+    expect(typeof res.body.accessToken).toBe('string');
   });
 
-  it('should register successfully with correct credentials', async () => {
+  it('should fail login with wrong credentials', async () => {
     const res = await request(app.getHttpServer())
-      .post('/register')
-      .send({ username: 'admin', password: '1234', email: 'shayan@gmail.com' }); 
+      .post('/login')
+      .send({
+        username: 'nonexistent_user',
+        password: 'wrong_password',
+      });
 
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('accessToken'); 
+    expect(res.status).toBe(401);
   });
 });

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ValidationPipe, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -30,7 +30,7 @@ export class AuthController {
   }
 
   @Post('/register')
-  async register(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+  async register(@Body(ValidationPipe) createUserDto: CreateUserDto, @Res() res) {
     let user = await this.userService.create(createUserDto);
     const payload = {
         id:user.id,
@@ -41,7 +41,10 @@ export class AuthController {
     console.log(payload);
   
     let token = this.authservice.generatedToken(payload);
-    return token ;
+    return res.status(201).json({
+      success: "account created successfully..",
+      token 
+    }) 
   }
 
 

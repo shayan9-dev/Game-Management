@@ -10,16 +10,12 @@ import { GameModule } from './game/game.module';
   imports: [ConfigModule.forRoot({isGlobal:true,envFilePath:['.local.env']}),TypeOrmModule.forRootAsync({
     imports:[ConfigModule],
     inject:[ConfigService],
-    useFactory:(configservice:ConfigService) =>({
-      type:'postgres',
-      host:configservice.get('DATABASE_HOST'),
-      port:configservice.get('DATABASE_PORT'),
-      username:configservice.get('DATABASE_USERNAME'),
-      password:configservice.get('DATABASE_PASSWORD'),
-      database:configservice.get('DATABASE_NAME'),
-      synchronize:configservice.get('DATABASE_SYNC'),
-      entities:[__dirname+'/**/*.entity{.ts,.js}']
-    })
+     useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get<string>('DATABASE_URL'),
+        synchronize: configService.get<boolean>('DATABASE_SYNC'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      })
   }), UserModule, AuthModule, ScoreModule, GameModule],
   controllers: [],
   providers: [],
