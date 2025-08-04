@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ValidationPipe, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ValidationPipe, Res, BadGatewayException, HttpExceptionOptions } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -31,7 +31,32 @@ export class AuthController {
 
   @Post('/register')
   async register(@Body(ValidationPipe) createUserDto: CreateUserDto, @Res() res) {
-    let user = await this.userService.create(createUserDto);
+    try{
+      let {username , email ,password} = createUserDto;
+      if(!username || !email || ! password){
+        return res.status(400).json({
+          success: false,
+          message: "Reuired all necessary fields"
+        })
+      }
+
+      let existingUser = await this.userService.findbyemail(email);
+
+      if(existingUser){
+        return res.status(400).json({
+          success: false,
+          message: "An user is already regisetr with this email"
+        })
+      }
+      
+      let user = await this.userService.create(createUserDto);
+
+      if(!user){
+        return res.status(404).json({
+          success: false,
+          message: "An error occur while registeration"
+        })
+      }
     const payload = {
         id:user.id,
         username:user.username,
@@ -45,7 +70,9 @@ export class AuthController {
       success: "account created successfully..",
       token 
     }) 
+    }catch(error: any | HttpExceptionOptions){
+      console.log(error)
+      throw new BadGatewayException("An error occur while registers", error)
+    }
   }
-
-
 }

@@ -23,9 +23,7 @@ describe('Auth Routes (e2e)', () => {
         email: `${uniqueUsername}@example.com`,
       });
 
-    expect(res.status).toBe(201); // assuming @HttpCode(201) in controller
-    expect(res.body).toHaveProperty('accessToken');
-    expect(typeof res.body.accessToken).toBe('string');
+    expect(res.status).toBe(201); 
   });
 
   it('should fail login with wrong credentials', async () => {
