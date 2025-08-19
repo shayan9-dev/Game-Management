@@ -54,4 +54,12 @@ describe('Auth Routes (e2e)', () => {
       })
     expect(res.status)
   })
+  it(`ajjebb ha masla yrr fail wit wrong email`, async () => {
+    const res = await request(app.getHttpServer())
+      .post("/verify")
+      .send({
+        email: "shayanahmed8862@gmail.com"
+      })
+    expect(res.status)
+  })
 });
