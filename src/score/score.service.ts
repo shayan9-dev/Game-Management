@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateScoreDto } from './dto/create-score.dto';
 import { UpdateScoreDto } from './dto/update-score.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,14 +29,23 @@ export class ScoreService {
   }
 
   findbyuserid(id: number) {
+    if(!id){
+      throw new BadRequestException('Id must be provided')
+    }
     return this.ScoreRepo.find({ relations: ['user'], where: { user: { id: id } } });
   }
 
   findOne(id: number) {
+    if(!id){
+      throw new BadRequestException('Id must be provided')
+    }
     return this.ScoreRepo.findOne({ where: { id } });
   }
 
   getleaderboard(id: number) {
+    if(!id){
+      throw new BadRequestException('Id must be provided')
+    }
     return this.ScoreRepo.find({
       relations: ['game'],
       where: { game: { id } },
@@ -46,6 +55,9 @@ export class ScoreService {
 
   }
   remove(id: number) {
+    if(!id){
+      throw new BadRequestException('Id must be provided')
+    }
     return this.ScoreRepo.delete(id);
   }
 }
