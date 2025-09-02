@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UseGuards, Req, BadRequestException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -24,16 +24,25 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    if(!id){
+      throw new BadRequestException('Id must be provided')
+    }
     return this.userService.findOne(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    if(!id){
+      throw new BadRequestException('Id must be provided')
+    }
     return this.userService.update(+id, updateUserDto);
   }
 
   @Get('/score/:id')
   getscorebyuserid(@Param('id') id:number){
+    if(!id){
+      throw new BadRequestException('Id must be provided')
+    }
     return this.scoreService.findbyuserid(id)
   }
 
