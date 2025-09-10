@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateScoreDto } from './dto/create-score.dto';
-import { UpdateScoreDto } from './dto/update-score.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Score } from './entities/score.entity';
 import { Repository } from 'typeorm';
@@ -21,7 +20,8 @@ export class ScoreService {
     score.game = await this.gameservice.findOne(gameid)
     score.user = await this.userservice.findOne(userid)
 
-    return this.ScoreRepo.save(score);
+    const newScore = this.ScoreRepo.save(score);
+    return newScore
   }
 
   findAll() {
