@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,11 +19,20 @@ export class UserService {
     const  salt = await bcrypt.genSalt(10);
     const hashpassword = await bcrypt.hash(createUserDto.password,salt);
     user.password = hashpassword;
-    return this.userRepo.save(user);
+    
+    const newuser = this.userRepo.save(user);
+    if(!newuser){
+      return new BadRequestException()
+    }
+    return newuser;
   }
 
   findAll() {
-    return this.userRepo.find();
+    const user =this.userRepo.find();
+    if(!user){
+      return new BadRequestException('No user Found')
+    }
+    return user;
   }
 
   findOne(id: number) {
